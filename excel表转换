@@ -1,0 +1,14 @@
+
+int titleToNumber(char * columnTitle){
+ int length=strlen(columnTitle);
+ int number=0;
+ int weiquan=0;
+ int result=0;
+  for(int i=0;i<length;i++){
+     number=columnTitle[i];
+     number=number-64;
+     weiquan=pow(26,length-i-1);
+     result=result+number*weiquan;
+ }
+return result;
+}
