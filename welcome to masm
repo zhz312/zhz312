@@ -1,0 +1,44 @@
+assume cs:codesg,ss:stack
+data segment
+	db 'welcome to masm!'
+	db 00000010b,00100100b,00010111b
+data ends
+stack segment
+	db 16 dup(0)
+stack ends
+
+codesg segment
+start:
+	mov ax,16 //
+	mov sp,ax//这一行的最底端到sp中
+	mov ax,0b860h//把显示字符的那串地址赋值给ax
+	mov ds,ax//让ds指向赋值的那串地址
+	mov ax,data//把data，意思就是存放字的地址给ax
+	mov es,ax//把data的地址给es寄存器
+	
+	mov si,0
+	mov di,0
+	mov cx,3//循环三次，意味着三行
+s:
+	mov bx,0
+	push cx//把cx存入栈内
+	mov cx,16//循环十六次，意味着一行
+	s1:
+		mov al,es:[bx]//把es中的一个字节的数据给ax的低位字节al
+		mov ah,es:16[si]//把在ah中，存放si+16的数据给ah的高位字节
+		mov ds:[di],ax//此时di为0，然后将ax传给ds地址段，意思就是显示的那一段中
+		
+		inc bx//给bx加一，这样可以传第二个值
+		add di,2//di加二，这样可以打印第二个字
+	loop s1//循环完十六次，这样字都已经写完第一行了，开始写第二行
+	
+	pop cx//cx取出继续循环
+	inc si//将si加一
+	add di,080h//
+	loop s
+	
+    mov ax,4c00h
+    int 21h
+
+codesg ends
+end start
