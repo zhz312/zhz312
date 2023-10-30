@@ -1,0 +1,71 @@
+import string
+
+def encode(string,string2):
+    tmp_str = str()
+    ret = str()
+    bit_string_str = string.encode()
+    remain = len( string ) % 3
+    remain_str = str()
+    for char in bit_string_str:
+        b_char = (bin(char)[2:])
+        b_char = '0'*(8-len(b_char)) + b_char
+        tmp_str += b_char
+    for i in range(len(tmp_str)//6):
+        temp_nub = int(tmp_str[i*6:6*(i+1)],2)
+        ret += string2[temp_nub]
+    if remain==2:
+        remain_str = tmp_str[-4:] + '0'*2
+        temp_nub = int(remain_str,2)
+        ret += string2[temp_nub] + "="
+    elif remain==1:
+        remain_str = tmp_str[-2:] + '0'*4
+        temp_nub = int(remain_str,2)
+        ret += string2[temp_nub] + "="*2
+    return ret.replace("=","")
+
+res = encode(input(),string.ascii_uppercase+string.ascii_lowercase+string.digits+'+/')   ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
+
+if res == "TlNTQ1RGe2Jhc2U2NCEhfQ":
+    print("good!")
+else:
+    print("bad!")
+
+当remain==1的时候  最后一位为Q
+那么，Q是在string2中排第16位。
+则temp_nub=16
+int(remain_str,2)=16
+remain_str=10000
+tmp_str[-2:]=01
+回到第二个for循环
+ret+=string2[temp_hub],把前面的字符遍历，依次把temp_nub求出来。[19, 37, 13, 19, 16, 53, 17, 6, 30, 54, 9, 33, 28, 54, 20, 54, 13, 2, 4, 33, 31, 16]得到在string2中res的每个字母的位置。 一共有22个字符，那么减去最后一个，还剩21个，那么len(tem_str)//6=21,根据最后一位31可以得出，31的二进制表示是11111,然后我们把tmp_str的全部二进制字符求出来，这样就求出了tmp_str,
+然后依据每八位的原则求出b_char,最后反推出flag,这就是全部逻辑，以下是代码实现
+s='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+res="TlNTQ1RGe2Jhc2U2NCEhfQ"
+count=0
+num=[]
+h=''
+for j in res:
+    for i in range(len(s)):
+        if s[i]==j:
+            num.append(i)
+            break
+square=[]
+square=num  
+square.pop() 
+print(square)
+for i in square:
+    i=bin(i)[2:]
+    i=i.rjust(6, '0')
+    h=h+i
+print(h)
+input_str = h  # 一个示例字符串
+chunk_size = 8  # 每个分组的大小
+
+# 使用循环来分隔字符串
+chunks = [input_str[i:i + chunk_size] for i in range(0, len(input_str), chunk_size)]
+
+# 输出分隔后的字符串
+for chunk in chunks:
+    chunk=int(chunk,2)
+    print(chr(chunk))
+
