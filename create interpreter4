@@ -1,0 +1,153 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// Token types
+enum TokenType {
+  INTEGER, MUL, DIV, EOF
+};
+//定义基本的类型
+class Token {
+public:
+  TokenType type;
+  int value;
+  
+  Token(TokenType type, int value) {
+    this->type = type;
+    this->value = value;
+  }
+};
+//定义Token的形式和值
+class Lexer {
+private:
+  string text;
+  int pos; 
+  char currentChar;
+  
+public:
+  Lexer(const string& text) {
+    this->text = text; 
+    this->pos = 0;
+    this->currentChar = this->text[this->pos];
+  }
+  //循环遍历字符
+  char peek() {
+    if (pos < text.length()) {
+      return text[pos];
+    }
+    return '\0';
+  }
+  
+  char next() {
+    currentChar = peek();
+    pos++;
+    return currentChar;
+  }
+  
+  void skipWhitespace() {
+    while(currentChar != '\0' && isspace(currentChar)) {
+      next();
+    }
+  }
+
+  int integer() {
+    string result;
+    while(currentChar != '\0' && isdigit(currentChar)) {
+      result += currentChar;
+      next();
+    }
+    return stoi(result);
+  }
+
+  Token getNextToken() {
+    while(currentChar != '\0') {
+
+      if (isspace(currentChar)) {
+        skipWhitespace();
+        continue;
+      }
+      
+      if (isdigit(currentChar)) {
+        return Token(INTEGER, integer());
+      }
+      
+      if (currentChar == '*') {
+        next();
+        return Token(MUL, '*');
+      }
+      
+      if (currentChar == '/') {
+        next();
+        return Token(DIV, '/');
+      }
+      
+      throw runtime_error("Invalid character");
+    }
+
+    return Token(EOF, 0);
+  }
+};
+
+class Interpreter {
+private:
+  Lexer* lexer;
+  Token currentToken;
+  
+public:
+  Interpreter(Lexer* lexer) {
+    this->lexer = lexer;
+    this->currentToken = this->lexer->getNextToken();
+  }
+
+  void eat(TokenType tokenType) {
+    if (currentToken.type == tokenType) {
+      currentToken = lexer->getNextToken();
+    } else {
+      throw runtime_error("Invalid syntax");
+    }
+  }
+
+  int factor() {
+    int result = currentToken.value;
+    eat(INTEGER);
+    return result;
+  }
+
+  int expr() {
+    int result = factor();
+    
+    while(currentToken.type == MUL || currentToken.type == DIV) {
+      Token token = currentToken;
+      if (token.type == MUL) {
+        eat(MUL);
+        result *= factor();
+      } else if (token.type == DIV) {
+        eat(DIV);
+        result /= factor();
+      }
+    }
+    
+    return result;
+  }
+};
+
+
+int main() {
+  while (true) {
+    string input;
+    getline(cin, input);
+    
+    if (input.empty()) {
+      continue;
+    }
+    
+    Lexer lexer(input); 
+    Interpreter interpreter(&lexer);
+    
+    int result = interpreter.expr();
+    cout << result << endl;
+  }
+  
+  return 0;
+}
