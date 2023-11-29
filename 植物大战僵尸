@@ -1,0 +1,83 @@
+#include <iostream>
+#include <Windows.h>
+#include <Windows.h> 
+#include <TlHelp32.h>
+#include <process.h>
+
+//int GetDyAddr(int Pid, int Base, int Offset[], int len)
+//{
+//    int temp;
+//    HANDLE Process;
+//    Process = OpenProcess(PROCESS_ALL_ACCESS, false, Pid);
+//    ReadProcessMemory(Process, (LPVOID)Base, &temp, 4, NULL);
+//    for (int i = 0; i < len; i++)
+//    {
+//        if (i == len - 1)
+//            temp += Offset[i];
+//        else
+//            ReadProcessMemory(Process, (LPVOID)(temp + Offset[i]), &temp, 4, NULL);
+//    }
+//    return temp;
+//}
+//
+//int main()
+//{
+//    int base;
+//    int offset[3];
+//    int PID = 24040;
+//    base = 0x007794f8;
+//    offset[0] = 0x868;
+//    offset[1] = 0x5578;
+//    int addr = GetDyAddr(PID, base, offset, 2);
+//    printf("进程地址：%x ", addr);
+//    HANDLE Process = OpenProcess(PROCESS_ALL_ACCESS, false, PID);
+//    WriteProcessMemory(Process, (LPVOID)addr, &PID, 4, 0);
+//}
+#include <iostream>
+#include <windows.h>  
+#include <TlHelp32.h> 
+#include <comdef.h>
+using namespace std;
+#include<comdef.h>   //必须包含
+
+const WCHAR* wchar = L"HelloWorld";
+
+_bstr_t bchar(wchar);
+
+const char* cchar = bchar;
+
+long GetProcessIdFromName(const char* name)
+{
+	HANDLE hsnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (hsnapshot == INVALID_HANDLE_VALUE)
+	{
+		cout << "Create TlHelp32 Error!" << endl;
+		return -1;
+	}
+
+	PROCESSENTRY32 processer;
+	processer.dwSize = sizeof(PROCESSENTRY32);
+
+	int flag = Process32First(hsnapshot, &processer);
+	while (flag != 0)
+	{
+		_bstr_t processName(processer.szExeFile);  //WCHAR字符串转换成CHAR字符串
+		if (strcmp(processName, name) == 0)
+		{
+			return processer.th32ProcessID;        //返回进程ID
+		}
+		flag = Process32Next(hsnapshot, &processer);
+	}
+
+	CloseHandle(hsnapshot);
+	return -2;
+}
+
+int main()
+{
+	long pid = GetProcessIdFromName("Plants vs. Zombies GOTY");  //输入进程名
+	cout << "DeepL.exe pid : " << pid << endl;
+
+	system("pause");
+	return 0;
+}
