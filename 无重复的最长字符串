@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        if(s.size() == 0) return 0;
+        unordered_set<char> lookup; //创建一个窗口存储字符串
+        int maxStr = 0;
+        int left = 0;
+        for(int i = 0; i < s.size(); i++){
+            while (lookup.find(s[i]) != lookup.end()){
+                lookup.erase(s[left]);//删除左侧字符串
+                left ++;
+            }
+            maxStr = max(maxStr,i-left+1);
+            lookup.insert(s[i]);
+    }
+        return maxStr;
+        
+    }
+};
+//滑动窗口法
