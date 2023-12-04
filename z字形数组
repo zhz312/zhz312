@@ -1,0 +1,23 @@
+用z字形数组解题。
+class Solution {
+public:
+    string convert(string s, int numRows) {
+       if(numRows<2){
+           return s;
+       }
+       vector<string> rows(numRows); //设值一个数组，每个数组元素类型为string
+       int i=0,flag=-1; //i为数组索引，flag决定上下遍历，flag为负数就是从下到上，flag为正就是从上到下。
+       for(char c:s){
+           rows[i].push_back(c); 
+           if(i==0||i==numRows-1){
+               flag=-flag;
+           }
+           i=i+flag;
+       }
+       string res;
+       for(const string &row:rows){
+           res=res+row;
+       }
+       return res;
+    }
+};
