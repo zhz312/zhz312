@@ -1,0 +1,27 @@
+class Solution {
+public:
+    int reverse(int x) {
+        // 初始化反转后的整数
+        int rev = 0;
+
+        // 开始循环，直到原始整数为0
+        while (x != 0) {
+            // 检查是否会导致溢出
+            if (rev < INT_MIN / 10 || rev > INT_MAX / 10) {
+                return 0;
+            }
+
+            // 取原始整数的最后一位数字
+            int digit = x % 10;
+
+            // 移除原始整数的最后一位数字
+            x /= 10;
+
+            // 将数字加入反转后的整数
+            rev = rev * 10 + digit;
+        }
+
+        // 返回反转后的整数
+        return rev;
+    }
+};
