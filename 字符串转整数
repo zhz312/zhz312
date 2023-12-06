@@ -1,0 +1,41 @@
+class Solution {
+public:
+    int myAtoi(string s) {
+        int res = 0, bndry = INT_MAX / 10;
+        int i = 0, sign = 1, length = s.size();
+
+        // 如果输入字符串长度为0，直接返回0
+        if (length == 0) 
+            return 0;
+
+        // 跳过字符串开头的空格，确保找到第一个非空格字符
+        while (s[i] == ' ')
+            if (++i == length)
+                return 0;
+
+        // 如果第一个非空格字符是减号 `-`，将 `sign` 设为 -1，表示结果为负数
+        if (s[i] == '-') 
+            sign = -1;
+
+        // 如果第一个非空格字符是加号 `+` 或减号 `-`，将索引向后移一位
+        if (s[i] == '-' || s[i] == '+') 
+            i++;
+
+        // 从当前索引 `i` 开始遍历字符串
+        for (int j = i; j < length; j++) {
+            // 如果当前字符不是数字，跳出循环
+            if (s[j] < '0' || s[j] > '9') 
+                break;
+
+            // 检查是否溢出
+            if (res > bndry || (res == bndry && s[j] > '7'))
+                return sign == 1 ? INT_MAX : INT_MIN;
+
+            // 更新结果，将当前数字加到结果的末尾
+            res = res * 10 + (s[j] - '0');
+        }
+
+        // 最后返回带有符号的结果
+        return sign * res;
+    }
+};
