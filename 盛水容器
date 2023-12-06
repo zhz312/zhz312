@@ -1,0 +1,25 @@
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+      int l=0;
+      int r=height.size()-1;
+      int size_area=0;
+      int max_size=0;
+      int trueheight=0;
+      while(l!=r){
+          if(height[l]>height[r]){
+        size_area=(r-l)*height[r];
+        r=r-1;
+          }else{
+              size_area=(r-l)*height[l];
+              l=l+1;
+          }
+          //判断包围的面积是多少
+          if(size_area>max_size){
+              max_size=size_area;
+          }
+         //判断是不是比原来的面积大;
+      }
+      return max_size;
+    }
+};
