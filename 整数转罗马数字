@@ -1,0 +1,23 @@
+class Solution {
+public:
+    string intToRoman(int num) {
+      int arr[13]={1,4,5,9,10,40,50,90,100,400,500,900,1000};
+     char brr[13][3] = {"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"};
+     string srr="";
+      int j=12;
+      int i=0;
+      while(num!=0){
+       if(num<arr[j]){
+           j--;
+       }else{
+           i=num/arr[j];
+           num=num%arr[j];
+           while(i!=0){
+               srr=srr+brr[j];
+               i--;
+           }
+       }
+      }
+      return srr;
+    }
+};
