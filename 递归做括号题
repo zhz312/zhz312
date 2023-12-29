@@ -1,0 +1,60 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Solution {
+    // 辅助函数，用于检查括号字符串是否合法
+    bool valid(const string& str) {
+        int balance = 0;
+        for (char c : str) {
+            if (c == '(') {
+                ++balance;
+            }
+            else {
+                --balance;
+            }
+            if (balance < 0) {
+                return false;  // 如果在任意时刻balance为负，说明括号不合法
+            }
+        }
+        return balance == 0;  // 最终balance必须为零才是合法的括号字符串
+    }
+
+    // 递归函数，生成所有可能的括号组合
+    void generate_all(string& current, int n, vector<string>& result) {
+        if (n == current.size()) {
+            if (valid(current)) {
+                result.push_back(current);  // 如果当前括号组合合法，加入结果集
+            }
+            return;
+        }
+        // 尝试添加左括号
+        current += '(';
+        generate_all(current, n, result);
+        current.pop_back();  // 回溯，移除尝试的左括号
+
+        // 尝试添加右括号
+        current += ')';
+        generate_all(current, n, result);
+        current.pop_back();  // 回溯，移除尝试的右括号
+    }
+
+public:
+    // 主函数，生成所有有效的括号组合
+    vector<string> generateParenthesis(int n) {
+        vector<string> result;
+        string current;
+        generate_all(current, n * 2, result);  // n*2是因为每个括号组合有2n个字符
+        return result;
+    }
+};
+
+int main() {
+    Solution solution;  // 创建 Solution 类的实例
+    vector<string> result = solution.generateParenthesis(2);  // 以3为例，可以根据需要更改
+    for (const string& str : result) {
+        cout << str << endl;
+    }
+
+    return 0;
+}
