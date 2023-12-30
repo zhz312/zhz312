@@ -1,0 +1,49 @@
+#include <vector>
+using namespace std;
+
+class Solution {
+    // 用于回溯的私有辅助函数
+    void backtrack(vector<string>& ans, string& cur, int open, int close, int n) {
+        // 基本情况：如果当前组合达到所需长度
+        if (cur.size() == n * 2) {
+            ans.push_back(cur); // 将当前组合添加到结果中
+            return;
+        }
+
+        // 如果还能添加左括号，就添加并进行递归调用
+        if (open < n) {
+            cur.push_back('(');
+            backtrack(ans, cur, open + 1, close, n);
+            cur.pop_back(); // 通过移除添加的 '(' 进行回溯
+        }
+
+        // 如果可以添加右括号而不违反平衡条件，就添加
+        if (close < open) {
+            cur.push_back(')');
+            backtrack(ans, cur, open, close + 1, n);
+            cur.pop_back(); // 通过移除添加的 ')' 进行回溯
+        }
+    }
+
+public:
+    // 生成所有有效括号组合的公共函数
+    vector<string> generateParenthesis(int n) {
+        vector<string> result; // 存储最终结果
+        string current; // 当前正在形成的组合
+        backtrack(result, current, 0, 0, n); // 开始回溯过程
+        return result; // 返回最终结果
+    }
+};
+
+int main() {
+    Solution solution;
+    int n = 3; // 你可以设置不同的 n 值
+    vector<string> result = solution.generateParenthesis(n);
+
+    // 输出生成的括号组合
+    for (const string& str : result) {
+        cout << str << endl;
+    }
+
+    return 0;
+}
