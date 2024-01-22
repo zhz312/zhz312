@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
+
+
+int main() {
+	int row = 0;
+	int line = 0;
+	cin >> row;
+	cin >> line;
+	int count = 0;
+	char sumfu[110][110] = { 0 };
+	for (int i = 0; i <row; i++) {
+		for (int j = 0; j < line; j++) {
+			cin >> sumfu[i][j];
+		}
+
+	}//存储问题解决
+
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < line; j++) {
+			if (sumfu[i][j] == '*') {
+				cout << '*';
+			}
+			else {
+				//列举八种情况 上下左右，左上，左下，右上，右下
+			
+				for (int k = i - 1; k <= i + 1; k++) {
+					for (int s = j - 1; s <= j + 1; s++) {
+						if (sumfu[k][s] == '*') {
+							count++;
+						}
+					}
+				}
+				cout << count;
+				count = 0;
+			}
+		}
+		cout << endl;
+	}
+	return 0;
+
+}
