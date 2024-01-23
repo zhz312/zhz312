@@ -1,0 +1,78 @@
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unordered_map>
+#include <string>
+using namespace std;
+typedef struct cter {
+	int toward;
+	string name;
+	struct cter *next;
+	struct cter *before;
+}cter;
+
+int main() {
+	long n = 0;
+	long m = 0;
+	cin >> n;
+	cin >> m;
+	cter* head = NULL;
+	cter* end = NULL;
+	cter* p = NULL;
+	head = new cter;
+	end = head;
+	p = new cter;//用循环链表结构解题，首先将名字和朝向放到
+	head->next = NULL;
+	int toward = 0;
+	string name;
+	for (long i = 0; i < n; i++) {
+		cin >> p->toward;
+		cin >> p->name;
+		end->next = p;
+		p->before = end;
+
+		p->next = NULL;
+		end = p;
+		p = new cter;;
+	}
+	delete p;
+	end->next = head->next;
+	head->next->before = end;
+	//循环链表建立完成，逆时针顺序排序，head->next存放的是第一个节点。
+	//0表示朝向圈内，1表示朝向圈外，圈内的话左手顺时针，右手逆时针。，圈外相反，
+	int num1 = 0;
+	int num2 = 0;
+	head = head->next;//将head作为第一个数来算。
+	for (long j = 0; j < m; j++) {
+		//第一个数0或者1，如果是0表示向左数，如果是1表示向右数，后面一个数字是人数。一共是m组数据
+		cin >> num1;
+		cin >> num2;
+		while (num2 != 0) {
+			num2--;
+			if (num1 == 0) {
+				if (head->toward == 0) {//朝向圈内的时候，向左数顺时针，向右数逆时针，num1表示向左数，所以是顺时针，向前数,是逆时针给出顺序的,意思是next是逆时针
+					head = head->before;
+
+				}
+				else if (head->toward == 1) {
+					head = head->next;
+				}
+
+
+			}//num1==0 的时候的情况
+			else {
+				if (head->toward == 0) {//朝向圈外的时候，向左数逆时针，向右数顺时针，num1表示向左数，所以向后数。
+					head = head->next;
+				}
+				else if (head->toward == 1) {
+					head = head->before;
+				}
+			}
+		}//循环数数
+		
+	}
+	cout << head->name;
+	return 0;
+
+}
