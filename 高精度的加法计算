@@ -1,0 +1,129 @@
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unordered_map>
+#include <string>
+#include<math.h>
+using namespace std;
+
+int main() {
+	//字符串解决问题,进位，然后输出
+	string num1;
+	string num2;
+	cin >> num1;
+	cin >> num2;
+	long len1 = num1.length();
+	long len2 = num2.length();
+	int number1 = 0;
+	int number2 = 0;
+	int jinwei = 0;
+	int benwei = 0;
+	long j = num2.length() - 1;
+	string end = "";
+	char zifu;
+	if (len1==len2) {
+		for (long i = len1 - 1; i >= 0; i--) {
+			
+			if (j >= 0) {
+				number1 = num1[i] - '0';
+				number2 = num2[j] - '0';
+
+				if ((number1 + number2 + jinwei) >= 10) {
+					benwei = (number1 + number2 + jinwei) % 10;
+					jinwei = 1;
+				}
+				else {
+				
+					benwei = number1 + number2 + jinwei;
+					jinwei = 0;
+				}
+				zifu = benwei + '0';
+				end = zifu + end;
+				j--;
+			}	
+
+		}
+
+	}
+	if (len1 > len2) {
+		for (long i = len1 - 1; i >= 0; i--) {
+			if (j >= 0) {
+				number1 = num1[i] - '0';
+				number2 = num2[j] - '0';
+
+				if ((number1 + number2 + jinwei) >= 10) {
+					benwei = (number1 + number2 + jinwei) % 10;
+					jinwei = 1;
+				}
+				else {
+
+					benwei = number1 + number2 + jinwei;
+					jinwei = 0;
+				}
+				zifu = benwei + '0';
+				end = zifu + end;
+				j--;
+			}
+			else {
+				//此时进位的值有可能是1，所以需要将进位的值和后面的进行相加运算。
+				number1 = num1[i] - '0';
+				if ((number1 + jinwei) >= 10) {
+					benwei = (number1 + jinwei) % 10;
+					jinwei = 1;
+
+				}
+				else {
+					benwei = number1 + jinwei;
+					jinwei = 0;
+				}
+				zifu = benwei + '0';
+				end = zifu + end;
+			}
+		}
+	}
+	if (len1 < len2) {
+		long i = num1.length() - 1;
+		for (; j >= 0; j--) {
+			if (i >= 0) {
+				number1 = num1[i] - '0';
+				number2 = num2[j] - '0';
+
+				if ((number1 + number2 + jinwei) >= 10) {
+					benwei = (number1 + number2 + jinwei) % 10;
+					jinwei = 1;
+				}
+				else {
+
+					benwei = number1 + number2 + jinwei;
+					jinwei = 0;
+				}
+				zifu = benwei + '0';
+				end = zifu + end;
+				i--;
+			}
+			else {
+				//此时进位的值有可能是1，所以需要将进位的值和后面的进行相加运算。
+				number2 = num2[j] - '0';
+				if ((number2 + jinwei) >= 10) {
+					benwei = (number2 + jinwei) % 10;
+					jinwei = 1;
+
+				}
+				else {
+					benwei = number2 + jinwei;
+					jinwei = 0;
+				}
+				zifu = benwei + '0';
+				end = zifu + end;
+			}
+		}
+	}
+	if (jinwei == 1) {
+		end = '1' + end;
+	}
+	cout << end;
+	
+	return 0;
+
+}
