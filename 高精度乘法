@@ -1,0 +1,89 @@
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unordered_map>
+#include <string>
+#include<math.h>
+using namespace std;
+//将每一轮的结果和前一轮的进行相加，调用字符相加函数
+string add(string str1, string str2)//高精度加法
+{
+	string str;
+	int len1 = str1.length();
+	int len2 = str2.length();
+	//前面补0，弄成长度相同
+	if (len1 < len2)
+	{
+		for (int i = 1; i <= len2 - len1; i++)
+			str1 = "0" + str1;
+	}
+	else
+	{
+		for (int i = 1; i <= len1 - len2; i++)
+			str2 = "0" + str2;
+	}
+	len1 = str1.length();
+	int cf = 0;
+	int temp;
+	for (int i = len1 - 1; i >= 0; i--)
+	{
+		temp = str1[i] - '0' + str2[i] - '0' + cf;
+		cf = temp / 10;
+		temp %= 10;
+		str = char(temp + '0') + str;
+	}
+	if (cf != 0)  str = char(cf + '0') + str;
+	return str;
+}
+int main() {
+	string num1;
+	string num2;
+	string sum = "0";
+	cin >> num1;
+	cin >> num2;
+	//假设num1和num2等长
+	int j = num2.length() - 1;
+	int jinwei = 0;
+	char temp;
+	int buling = 0;
+	for (int i = num1.length() - 1; i >= 0; i--) {
+   //取出一位数//先做一位的试试
+		//还要做补充0的工作
+		buling = num1.length() - 1 - i;
+		string tempsign = "";
+		int number1 = num1[i] - '0';
+		while (j >= 0) {
+			int number2 = num2[j] - '0';
+			int benwei = (number2 * number1 + jinwei) % 10;
+		       jinwei = (number2 * number1 + jinwei) / 10;
+			j--;
+			temp = benwei + '0';
+			tempsign = temp + tempsign;
+		}
+		if (jinwei != 0) {
+			temp = jinwei + '0';
+			tempsign = temp + tempsign;
+			
+		}//一位的时候没问题，接下来相加即可。
+		while (buling != 0) {
+			tempsign = tempsign + '0';
+			buling--;
+		}
+		jinwei = 0;
+		j= num2.length() - 1;
+		sum=add(sum, tempsign);
+	}
+
+	//去除头部的0
+	
+	while (sum[0] == '0') {
+		sum.erase(0, 1);
+	}
+	if (sum == "") {
+		sum = '0';
+	}
+	cout << sum;
+	return 0;
+
+}
