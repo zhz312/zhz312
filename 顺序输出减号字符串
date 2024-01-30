@@ -1,0 +1,94 @@
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unordered_map>
+#include <string>
+#include<math.h>
+using namespace std;
+
+//x^，表示指数
+int main() {
+	int p1;
+	int p2;
+	int p3;
+	cin >> p1;//1的时候填充小写，2的时候填充大写，3的时候填充*号，数字填充一样
+	cin >> p2;//p2表示一次要填充的个数
+	cin >> p3;//1的时候表示正顺序，2的时候表示逆顺序
+	string str;//ascll码 左边的字符要小于右边的字符，否则就只删除减号。
+	cin >> str;
+	char ptr;
+	string brr = "";
+	for (int i = 0; str[i] != '\0'; i++) {
+		//首先循环遍历减号；
+		if (str[i+1] == '-'&&(str[i]<str[i+2])) {//当左边的ascll码小于右边的时候   i i+1 i+2
+			if (str[i] <= 122 && str[i] >= 97&& str[i + 2] <= 122 && str[i + 2] >= 97) {
+				//两边都是字母的时候
+				brr.push_back(str[i]);
+				if (p1 == 1) {//填充小写
+					ptr = str[i]+1;
+					while (ptr < str[i + 2]) {//用于添加重复的字符
+						for (int j = 1; j <= p2; j++) {
+							brr.push_back(ptr);
+						}
+						ptr++;
+					}
+				}
+				else if (p1 == 2) {//填充大写
+					ptr = str[i] - 32+1;//小写转大写
+					while (ptr < str[i + 2] - 32) {
+						for (int j = 1; j <= p2; j++) {
+							brr.push_back(ptr);
+						}
+						ptr++;
+					}
+				}
+				else if (p1 == 3) {
+					ptr = str[i] + 1;
+					while (ptr < str[i + 2]) {
+						for (int j = 1; j <= p2; j++) {
+							brr.push_back('*');
+						}
+						ptr++;
+					}
+				}
+				brr.push_back(str[i + 2]);
+				i = i + 2;
+			}
+			else if (str[i + 2] <= '9' && str[i] <= '9' && str[i + 2] >= '0' && str[i] >= '0') {//两边都是数字的时候
+				brr.push_back(str[i]);
+				if (p1 == 3) {
+					ptr = str[i] + 1;
+					while (ptr < str[i + 2]) {
+						for (int j = 1; j <= p2; j++) {
+							brr.push_back('*');
+						}
+						ptr++;
+					}
+				}
+				else {
+					ptr = str[i] + 1;
+					while (ptr < str[i + 2]) {
+						for (int j = 1; j <= p2; j++) {
+							brr.push_back(ptr);
+						}
+						ptr++;
+					}
+				}
+				brr.push_back(str[i + 2]);
+				i = i + 2;
+
+			}
+			else {
+				brr.push_back(str[i]);
+			}
+
+		}
+		else {
+			brr.push_back(str[i]);
+		}
+	}
+	cout << brr;
+
+	return 0;
+}
