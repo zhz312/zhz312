@@ -1,0 +1,58 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include<math.h>
+#include<algorithm>
+using namespace std;
+ struct student {
+	 int num;
+	int china;
+	int english;
+	int math;
+	int sum;
+}student[310];
+bool cmp( struct student men1, struct student men2) {//比较两个结构的大小,men1大于men2为true
+	if (men1.sum > men2.sum) {
+		return true;
+	}
+	else if (men1.sum < men2.sum) {
+		return false;
+	}
+	else if (men1.sum == men2.sum) {
+		if (men1.china > men2.china) {
+			return true;
+		}
+		else if (men1.china < men2.china) {
+			return false;
+		}
+		else if (men1.china == men2.china) {
+			if (men1.num > men2.num) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	
+}
+int main()
+{
+	int n;
+	cin >> n;
+	for (int i = 1; i <= n; i++) {
+		cin >> student[i].china >> student[i].math >> student[i].english;
+		student[i].num = i;
+		student[i].sum = student[i].china + student[i].math + student[i].english;
+	}//对信息进行录入
+	//第三部对其进行排序，使用sort函数；
+	sort(student + 1, student + 1 + n, cmp);
+	for (int i = 1; i <= 5; i++) {
+		cout << student[i].num << " " << student[i].sum;
+		if (i != 5) {
+			cout << endl;
+		}
+	}
+	return 0;
+}
