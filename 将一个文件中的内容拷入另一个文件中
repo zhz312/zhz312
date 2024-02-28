@@ -1,0 +1,41 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include<math.h>
+#include<algorithm>
+#include<iomanip>
+#include <windows.h>
+#include <malloc.h>
+using namespace std;
+
+
+
+int main()
+{
+	FILE* pFile;
+	FILE* pFile2;
+	long lsize;
+	char* buffer;
+	size_t result;
+	pFile = fopen("C:\\Windows\\System32\\notepad.exe", "rb");
+	pFile2 = fopen("D:\\test.txt", "wb");
+	if (pFile == NULL) {
+		fputs("File error", stderr);
+		exit(1);
+	}
+	fseek(pFile, 0, SEEK_END);
+	lsize = ftell(pFile);
+	rewind(pFile);//还原到开头
+	buffer = (char*)malloc(sizeof(char) * lsize);
+	if (buffer == NULL) {
+		fputs("memory error", stderr);
+		exit(2);
+	}
+	 fread(buffer, 1, lsize+1, pFile);
+	 fwrite(buffer, 1, lsize, pFile2);
+	fclose(pFile);
+	fclose(pFile2);
+	free(buffer);
+	return 0;
+}
