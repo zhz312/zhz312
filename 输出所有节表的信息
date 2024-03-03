@@ -1,0 +1,71 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include<math.h>
+#include<algorithm>
+#include<iomanip>
+#include <windows.h>
+#include <malloc.h>
+using namespace std;
+
+
+
+int main()
+{
+	PIMAGE_DOS_HEADER PDOS_HEADER = NULL;
+	PIMAGE_NT_HEADERS PNT_HEADER = NULL;
+	PIMAGE_FILE_HEADER PFILE_HEADER = NULL;
+	PIMAGE_OPTIONAL_HEADER POPTIONAL_HEADER = NULL;
+	PIMAGE_SECTION_HEADER  PSECTION_HEADER = NULL;
+	FILE* pFile;
+	pFile = fopen("C:\\Windows\\System32\\notepad.exe", "rb");
+
+	if (pFile == NULL) {
+		cout << "读取失败" << endl;
+	}
+	fseek(pFile, 0L, SEEK_END);
+	int length;
+	length = ftell(pFile);
+
+	fseek(pFile, 0L, SEEK_SET);
+	char* str = (char*)calloc(length + 1, sizeof(char));
+	fread(str, length, sizeof(char), pFile);
+	PDOS_HEADER = (PIMAGE_DOS_HEADER)str;
+	//获取dos头
+	cout << "DOS头：" << endl;
+	printf("E_magic:%x\n", PDOS_HEADER->e_magic);
+	printf("E_lfanew:%x\n", PDOS_HEADER->e_lfanew);
+	PNT_HEADER = (PIMAGE_NT_HEADERS)(str + PDOS_HEADER->e_lfanew);
+	cout << "PNT_HEADER:" << hex << PNT_HEADER->Signature << endl;
+	PFILE_HEADER = (PIMAGE_FILE_HEADER)(str + PDOS_HEADER->e_lfanew + 4);
+	cout << "PFILE_HEADER信息：" << endl;
+	printf("Machine:%x\n", PFILE_HEADER->Machine);
+	cout << "numberofsections文件中节的总数：" << hex << PFILE_HEADER->NumberOfSections << endl;
+	cout << "SizeofOptionalheader可选pe头的大小：" << hex << PFILE_HEADER->SizeOfOptionalHeader << endl;
+	POPTIONAL_HEADER = (PIMAGE_OPTIONAL_HEADER)(str + PDOS_HEADER->e_lfanew + 24);
+	cout << "可选pe头的内容：" << endl;
+	cout << "文件类型magic: " << hex << POPTIONAL_HEADER->Magic << endl;
+	cout << "程序入口addressofentrypoint: " << hex << POPTIONAL_HEADER->AddressOfEntryPoint << endl;
+	cout << "内存镜像地址iamgebase: " << hex << POPTIONAL_HEADER->ImageBase << endl;
+	cout << "SectionAlignment内存对齐: " << hex << POPTIONAL_HEADER->SectionAlignment << endl;
+	cout << "FileAlignment文件对齐: " << hex << POPTIONAL_HEADER->FileAlignment << endl;
+	cout << "SizeOfImage:" << hex << POPTIONAL_HEADER->SizeOfImage << endl;
+	printf("sizeofheaders : %x\n", POPTIONAL_HEADER->SizeOfHeaders);
+	PSECTION_HEADER = (PIMAGE_SECTION_HEADER)(str + PDOS_HEADER->e_lfanew + 24 + PFILE_HEADER->SizeOfOptionalHeader);//还要找到可选pe头的大小并且相加
+	//如果我想用循环去遍历那我应该怎么遍历，可以用数组吗,那么就循环遍历即可。
+	for (int i = 1; i <= PFILE_HEADER->NumberOfSections;i++, PSECTION_HEADER++) {
+		cout << "这是第" << i << "个节的数据: " << endl;
+		for (int j = 0; j < 8; j++) {
+			cout << PSECTION_HEADER->Name[j];
+		}
+		cout << endl;
+		printf("MISC :%x\n", PSECTION_HEADER->Misc);
+		printf("VirtureAddress: %x\n", PSECTION_HEADER->VirtualAddress);
+		printf("SizeOfRawData:%x\n", PSECTION_HEADER->SizeOfRawData);
+		printf("PointerToRawdata: %x\n", PSECTION_HEADER->PointerToRawData);
+		printf("characterristic: %x\n", PSECTION_HEADER->Characteristics);
+	}
+	  
+	return 0;
+}//只能够用pdosheader的地址进行相加，不能够用别的
