@@ -1,0 +1,120 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef pair<int, int>pii;
+const int N = 100;
+#define int long long//将int定义为long long
+int g[N][N];//用于存地图
+int n, m;
+
+
+bool st_sea[N][N];//判断哪个海已经访问过了，避免重复访问
+bool st_road[N][N];//判断哪个陆地已经访问过了，避免重复访问
+
+//方向向量
+//海水的方向向量
+
+int dx[8] = { -1,-1,-1,0,1,1,1,0 };
+int dy[8] = { -1, 0, 1, 1, 1, 0, -1, -1 };
+//几个方向顺时针旋转，利用x坐标和y坐标的加减
+
+
+int ddx[4] = { -1, 0, 1, 0 };
+int ddy[4] = { 0, 1, 0, -1 };
+//海水有八个方向，陆地有四个方向
+
+int ans = 0;//一共有几个外陆地
+
+
+bool check(int x, int y) {//判断是否已经超越了最外围的地图边界
+	return(x >= 0 and x < n and y >= 0 and y < m);
+	//条件解析，表示在x方向上大于零小于n，表示在y的方向上大于零小于m
+}
+//找到了x,y所在的岛屿，并且把该岛屿中的其他的1都标记成了true
+void bfs_road(int x, int y) {
+	queue<pii>q;
+	st_road[x][y] = true;
+	q.push({ x,y });
+	while (q.size()) {//只用队列中还有元素，意思就是还有1可以遍历
+		auto t = q.front();
+		q.pop();//取出队列中的第一个数进行遍历
+		for (int i = 0; i < 4; i++) {
+			int nx = t.first + ddx[i];
+			//遍历上下左右四个位置
+			int ny = t.second + ddy[i];
+			if (check(nx, ny) and g[nx][ny] and !st_road[nx][ny]) {
+				//检查有没有越界，是不是陆地，有没有被遍历过
+				st_road[nx][ny] = true;//满足条件就置为一，开始遍历下一个
+				q.push({ nx,ny });
+			}
+		}
+	}
+}
+
+void bfs_sea(int x, int y) {
+	queue<pii>q;
+	st_sea[x][y] = true;//传入一个x,y坐标并且设置为ture开始遍历下一个坐标
+	q.push({ x,y });//传入q中进行
+	while (q.size()) {
+		auto t = q.front();//取出q的头个元素
+		q.pop();//将q的元素取出
+		for (int i = 0; i < 8; i++) {
+			int nx = q.first + dx[i];
+			int ny = q.second + dy[i];
+			if (check(nx, ny) and g[nx][ny] and !st_sea[nx][ny]) {
+				q.push({ nx,ny });
+				st_sea[nx][ny] = true;
+			}
+
+			if (check(nx, ny) and g[nx][ny] and !st_road[nx][ny]) {
+				ans++;//遍历到陆地了，说明碰到陆地了
+				bfs_road(nx, ny);//继续遍历陆地
+			}
+		}
+	}
+}
+//简单写写逻辑，首先遍历逻辑是这样的，传入一个海的坐标，然后开始遍历这个坐标，如果周围是海就接着遍历海，如果碰到陆地说明遇到一个岛屿，遍历这个岛屿，直到岛屿遍历完，然后再从另一片海开始遍历
+void solve()
+{
+	cin >> n >> m;
+
+	ans = 0;
+	for (int i = 0; i <= n; i++) {
+		for (int j = 0; j <= m; j++) {
+			st_sea[i][j] = st_road[i][j] = false;//先把所有陆地和海洋置为0
+		}
+	}
+	for (int i = 0; i < n; i++) {
+		string s;
+		cin >> s;
+		for (int j = 0; j < m; j++)
+		{
+			g[i][j] = s[j] - '0';
+		}
+	}
+
+	bool flag = false;//将flag置为0
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (!i || i == n - 1 || !j || j == m - 1) {
+				//在最外围的第一行，第一列，最后一行，最后一列，四种情况
+				if (!g[i][j] && !st_sea[i][j]) {//都没有被定义过的
+					flag = true;//如果最外围存在海洋那么就开始遍历
+					bfs_sea(i, j);//开始遍历,将最外围的海洋全部遍历完成
+				}
+			}
+		}
+	}
+	if (!flag)
+		ans = 1;
+	cout << ans << endl;
+}
+signed main()
+{
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int t = 1;
+	cin >> t;
+	while (t--) {
+		solve();
+	}
+}
