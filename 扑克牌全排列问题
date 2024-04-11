@@ -1,0 +1,38 @@
+
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+#include <set>
+using namespace std;
+#define int long long
+int arr[100] = { 0 };
+int used[100] = { 0 };
+int numcount = 0;//重新完善下代码
+int n;
+void dfs(int step) {//当前已经放了多少张牌，如果放完了，就退回上一步
+    if (step == n) {
+        numcount++;
+        return;//返回到上一层
+   }
+    for (int i = 1; i <= n; i++) {
+        if (used[i] != 1) {
+            arr[step] = i;
+            used[i] = 1;
+            dfs(step + 1);
+            used[i] = 0;
+       }
+
+    }
+    
+}
+signed main()
+{
+    cin >> n;
+    dfs(1);
+    cout << numcount;
+    return 0;
+}
