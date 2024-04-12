@@ -1,0 +1,87 @@
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+#include <set>
+using namespace std;
+
+#define int long long
+#define endl '\n'
+typedef pair<int, int> pii;
+const int N = 1e5 + 10;
+int dirx[6] = { 0,1,0,-1 };//上右下左
+int diry[6] = { -1,0,1,0 };//上右下左
+int geted[11][11] = { 0 };//0表示未走过，1表示已经走过了,//用数字表示已走过的路程
+char arr[11][11] = { 0 };//用来记录jio步
+int n;//正方形的边长
+//左上的开始方向向下，右下的开始方向向上
+int dirx1 = 0;//往下
+int diry1=1;
+int dirx2=0;//往上
+int diry2=-1;
+void dfs(int x1,int y1,int x2,int y2) {//俩个坐标进行遍历
+    //模拟过程
+    int newx1 = x1 + dirx1;
+    int newy1 = y1 + diry1;
+    int newx2 = x2 + dirx2;
+    int newy2 = y2 + diry2;
+    //看当前是否可以继续进行下去，如果不行就重新选择位置
+    if (newx1 >= 1 && newx1 <= n && newy1 >= 1 && newy1 <= n && geted[newx1][newy1] == 0) {//如果满足条件则继续走
+        arr[newx1][newy1] = 'Y';
+        geted[newx1][newy1] = 1;
+    }
+    else {
+        for (int i = 0; i < 4; i++) {//需要俩个独立的，如果都确定了才可以走。
+            newx1 = x1 + dirx[i];
+            newy1 = y1 + diry[i];
+            if (newx1 >= 1 && newx1 <= n && newy1 >= 1 && newy1 <= n && geted[newx1][newy1] == 0) {
+                arr[newx1][newy1] = 'Y';
+                geted[newx1][newy1] = 1;
+                dirx1 = dirx[i];
+                diry1 = diry[i];
+                break;
+            }
+        }
+    }
+
+    if (newx2 >= 1 && newx2 <= n && newy2 >= 1 && newy2 <= n && geted[newx2][newy2] == 0) {//如果可以继续走，那么继续遍历
+        arr[newx2][newy2] = 'J';
+        geted[newx2][newy2] = 1;
+        dfs(newx1, newy1, newx2, newy2);
+    }
+    else {
+        for (int i = 0; i < 4; i++) {//需要俩个独立的，如果都确定了才可以走。
+            newx2 = x2 + dirx[i];
+            newy2 = y2 + diry[i];
+            if (newx2 >= 1 && newx2 <= n && newy2 >= 1 && newy2 <= n && geted[newx2][newy2] == 0) {
+                arr[newx2][newy2] = 'J';
+                geted[newx2][newy2] = 1;
+                dirx2 = dirx[i];
+                diry2 = diry[i];
+                dfs(newx1, newy1, newx2, newy2);
+                break;
+            }
+        }//如果四个方向都走不了那么遍历结束
+
+    }
+}
+
+
+signed main() {
+    cin >> n;
+    geted[1][1] = 1;
+    geted[n][n] = 1;
+    arr[1][1] = 'Y';
+    arr[n][n] = 'J';
+    dfs(1, 1, n, n);
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            cout << arr[j][i] << " ";
+        }
+        cout << endl;
+    }
+    return 0;
+}
